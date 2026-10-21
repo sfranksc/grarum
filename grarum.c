@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <termios.h>
@@ -9,6 +10,16 @@
 	BUFR	= buffer
 	ATTR	= attributes
 */
+
+//this functions will mode into an utility file soon.
+int iscntrl(int c)
+{
+	if ((c >= 0 && c <= 31) || c == 127)
+		return(1);
+	return (0);	
+}
+
+//end of utilities
 
 //struct that will contains the default mode of the STDI
 struct	termios orig_termios;
@@ -42,6 +53,12 @@ int	main(void)
 	// BUFR
 	char	c;
 	// read 1 byte from STDI into BUFR c
-	while(read(STDIN_FILENO, &c, 1) == 1 && c != 'q');
+	while(read(STDIN_FILENO, &c, 1) == 1 && c != 'q')
+	{
+		if (iscntrl(c))
+			printf("%d\n", c);
+		else
+			printf("%d ('%c')\n", c, c);
+	}
 	return (0);
 }
