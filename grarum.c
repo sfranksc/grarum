@@ -1,24 +1,37 @@
+#include <stdlib.h>
 #include <unistd.h>
 #include <termios.h>
 
 /*
 	KEYWORDS LIST:
 	
-	STDI = standard input
-	BUFR = buffer
+	STDI	= standard input
+	BUFR	= buffer
+	ATTR	= attributes
 */
+
+//struct that will contains the default mode of the STDI
+struct	termios orig_termios;
+
+//disable raw mode
+void	disable_raw_mode(void)
+{
+	//set the ATTR of STDI to the default ATTR
+	tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios);
+}
 
 //set mode to raw for the STDI
 void	enable_raw_mode(void)
 {
-	//create a struct to contain the ATTR of STDI
-	struct	termios raw;
+	//write the ATTR of the STDI in orig_termios
+	tcgetattr(STDIN_FILENO, &orig_termios);
+	atexit(disable_raw_mode);
 
-	tcgetattr(STDIN_FILENO, &raw);
-	
-	//operate bits with the and (&) and not (~) operators
+	//create a new struct for our raw mode that will first contain the original ATTR
+	struct termios raw = orig_termios;
 	raw.c_lflag &= ~(ECHO);
 
+	//apply the changes
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 }
 
