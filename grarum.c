@@ -29,7 +29,7 @@ void	enable_raw_mode(void)
 
 	//create a new struct for our raw mode that will first contain the original ATTR
 	struct termios raw = orig_termios;
-	raw.c_lflag &= ~(ECHO);
+	raw.c_lflag &= ~(ECHO | ICANON);
 
 	//apply the changes
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
